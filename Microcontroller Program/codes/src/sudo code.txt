@@ -1,0 +1,24 @@
+1: Set up IR LED
+    IRLED Pin -> Output
+    Write IRLED Pin = 0 (off)
+2: OLED Screen Setup
+    Enables Display to OLED Screen
+    Prints to serial monitor if failed
+3: getTime
+    Connects to wifi
+    gets time from NTP Server
+    stores time info in struct timeinfo
+    disconnects from wifi
+4: Display Local time
+    prints current date and time to OLED Screen
+        Will be used in future for User Menues
+5: Alarm Setup
+    sets time for day of the week to trigger Alarm
+    Need 14 alarms, one to turn on TV, one to turn off TV,
+        7 days a week
+    Future: add variables to change alarm times on the fly
+5: TV Controls
+    Generate 32 KHz Carrier Square wave
+    Modulate with decoded remote control signals
+        IE: Power_Button = 0b01010111111000111110100000010111;
+    IF current time = Alarm Time: Write Carrier and modulated signal to IR LED Pin
