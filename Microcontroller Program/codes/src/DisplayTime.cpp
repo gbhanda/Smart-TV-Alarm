@@ -38,73 +38,73 @@ void DisplayTime::Write(int _Year, int _Month, int _Day, int _DayofWeek, int _Ho
 
   switch (_DayofWeek)
   {
-  case 1:
-      DOW = "Sunday";
-      break;
-  case 2:
-      DOW = "Monday";
-      break;
-  case 3:
-      DOW = "Tuesday";
-      break;
-  case 4:
-      DOW = "Wednesday";
-      break;
-  case 5:
-      DOW = "Thursday";
-      break;
-  case 6:
-      DOW = "Friday";
-      break;
-  case 7:
-      DOW = "Saturday";
-      break;
-  default:
-      DOW = "ERROR";
-      break;
+    case 1:
+        DOW = "Sunday";
+        break;
+    case 2:
+        DOW = "Monday";
+        break;
+    case 3:
+        DOW = "Tuesday";
+        break;
+    case 4:
+        DOW = "Wednesday";
+        break;
+    case 5:
+        DOW = "Thursday";
+        break;
+    case 6:
+        DOW = "Friday";
+        break;
+    case 7:
+        DOW = "Saturday";
+        break;
+    default:
+        DOW = "ERROR";
+        break;
   }
 
   switch (_Month)
   {
-  case 1:
-      MONTH = "January";
-      break;
-  case 2:
-      MONTH = "February";
-      break; 
-  case 3:
-      MONTH = "March";
-      break;
-  case 4:
-      MONTH = "April";
-      break;
-  case 5:
-      MONTH = "May";
-      break;
-  case 6:
-      MONTH = "June";
-      break;
-  case 7:
-      MONTH = "July";
-      break;
-  case 8:
-      MONTH = "August";
-      break;
-  case 9:
-      MONTH = "September";
-      break;
-  case 10:
-      MONTH = "October";
-      break;
-  case 11:
-      MONTH = "November";
-      break;
-  case 12:
-      MONTH = "December";
-      break;
-  default:
-      MONTH = "ERROR";
-      break;
+    case 1:
+        MONTH = "January";
+        break;
+    case 2:
+        MONTH = "February";
+        break; 
+    case 3:
+        MONTH = "March";
+        break;
+    case 4:
+        MONTH = "April";
+        break;
+    case 5:
+        MONTH = "May";
+        break;
+    case 6:
+        MONTH = "June";
+        break;
+    case 7:
+        MONTH = "July";
+        break;
+    case 8:
+        MONTH = "August";
+        break;
+    case 9:
+        MONTH = "September";
+        break;
+    case 10:
+        MONTH = "October";
+        break;
+    case 11:
+        MONTH = "November";
+        break;
+    case 12:
+        MONTH = "December";
+        break;
+    default:
+        MONTH = "ERROR";
+        break;
   }
 
   Serial.println("Updating Display");
@@ -131,4 +131,49 @@ void DisplayTime::Write(int _Year, int _Month, int _Day, int _DayofWeek, int _Ho
   display.print(_Day);
   
   display.display();
+}
+
+void DisplayTime::IR_Record_PWR_BTN(){
+    display.clearDisplay();
+    display.setTextColor(SSD1306_WHITE);        // Draw white text
+    display.setCursor(0,0);             // Start at top-left corner
+    display.setTextSize(2); 
+    display.println(F("Press Power Button"));
+    display.display();
+}
+
+
+
+void DisplayTime::IR_Record(bool _IR_Record, int _numberRecorded){
+    display.clearDisplay();
+    display.setTextSize(1);             // Normal 1:1 pixel scale
+    display.setTextColor(SSD1306_WHITE);        // Draw white text
+    display.setCursor(0,0);             // Start at top-left corner
+    display.println(F("Recording IR Data"));
+    display.setTextSize(2); 
+    display.print(_numberRecorded);
+    display.println(F("/16"));
+    display.setTextSize(1);
+    display.print("Press Done button when finished");
+    display.display();
+}
+
+void DisplayTime::Send_Sequence(){
+    display.clearDisplay();
+    display.setTextSize(2);             // Normal 1:1 pixel scale
+    display.setTextColor(SSD1306_WHITE);        // Draw white text
+    display.setCursor(0,0);             // Start at top-left corner
+    display.println(F("Sending IR"));
+    display.println(F("Sequence"));
+    display.display();
+}
+
+void DisplayTime::Wifi_Connecting(){
+    display.clearDisplay();
+    display.setTextSize(2);             // Normal 1:1 pixel scale
+    display.setTextColor(SSD1306_WHITE);        // Draw white text
+    display.setCursor(0,0);             // Start at top-left corner
+    display.println(F("Connecting"));
+    display.println(F("To WiFi"));
+    display.display();
 }

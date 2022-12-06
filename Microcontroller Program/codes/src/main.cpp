@@ -1,4 +1,3 @@
-#include <Arduino.h>
 /**************************************************************************
 * Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)     *
 * The pins for I2C are defined by the Wire-library.                       *
@@ -6,6 +5,7 @@
 *                                   IR_LED - D33                          *
 *                                   IR_Recieve                            *
  **************************************************************************/
+#include <Arduino.h>
 #include "DisplayTime.h"
 #include "Infrared.h"
 #include <WiFi.h>
@@ -13,6 +13,7 @@
 #include <TimeAlarms.h>
 #include <NTPClient.h>
 #include <TimeLib.h>
+#include "IR_Rx.h"
 
 
 #define NTP_ADDRESS "pool.ntp.org"
@@ -23,13 +24,18 @@
 //unsigned long Power_Button = 0b10101000000111000001011111101000; // <--- This is what I directly Decoded, 
                                                                    //but it worked when i flipped the bits
 unsigned long The_Power_Button   = 0b01010111111000111110100000010111; //Still Right
+/* 
 unsigned long Home_Button    = 0b01010111111000111100000000111111;
 unsigned long Down_Arrow     = 0b01010111111000111100110000110011;
 unsigned long Right_Arrow    = 0b01010111111000111011010001001011;
-unsigned long OK_Button      = 0b01010111111000110101010010101011;
+unsigned long OK_Button      = 0b01010111111000110101010010101011; 
+ */
 
-
+bool Recording = false;
+bool Record_IR = false;
 bool TVon = false;
+unsigned long startMillis;
+unsigned long currentMillis;
 const char* ssid       = "JOY";
 const char* password   = "Maggie123";
 //const char* ssid       = "Cui Home";
@@ -41,6 +47,7 @@ const int   daylightOffset_sec = 0;
 struct tm timeinfo;
 DisplayTime displaytime(true);
 Infrared IR(true);
+IR_Rx RecieveIR(true);
 
 //const int   daylightOffset_sec = 3600;
 
@@ -82,7 +89,7 @@ Infrared IR(true);
   WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
   Serial.println("**********DISCONNECTED**********");
-  }
+} // end getTime()
 
 
 void tvOnSeq(){
@@ -142,51 +149,101 @@ void AlarmTimeSetup(){
   WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
   Serial.println("**********DISCONNECTED**********");
-  }
+  } //end alarmTimeSetup
   
 
+/*   void debugBlinker(){
+      currentMillis = millis();  //get the current time
+      if (currentMillis - startMillis >= 30000){  //test whether the period has elapsed
+          //IR.Write(The_Power_Button);
+          //displaytime.Write(year(), month(), day(), weekday(), hourFormat12(), minute(), second());
+          //startMillis = currentMillis;  //IMPORTANT to save the start time of the current LED brightness 
+        
+        RecieveIR.send();
+        
+        }
 
-  void setup(){
-  Serial.begin(9600);
+  } //end debugBlinker 
 
-  IR.Setup(IRLEDpin, BITtime);
-
-  displaytime.Setup();
-  delay(1000);
-  getTime();
-  AlarmTimeSetup();
-
-
-  //   Alarm.alarmRepeat(18,53,0, getTime);            // Refresh Time at 1:00 am every day
-  //   Alarm.alarmRepeat(19,56,0, AlarmTimeSetup);     // Refresh Time at 1:00 am every day 
-  //Alarm.timerRepeat(3, SerialTest);
-  //Alarm.timerRepeat(1, DisplayLocalTime);
-
-  Alarm.alarmRepeat(dowMonday    , 6,45,0, tvOnSeq);
-  Alarm.alarmRepeat(dowMonday    , 7,20,0, TV_Off);
-  
-  Alarm.alarmRepeat(dowTuesday   , 6,45,0, tvOnSeq);
-  Alarm.alarmRepeat(dowTuesday   , 7,20,0, TV_Off);
-  
-  Alarm.alarmRepeat(dowWednesday , 6,45,0,  tvOnSeq);
-  Alarm.alarmRepeat(dowWednesday , 7,20,0, TV_Off);
-  
-  Alarm.alarmRepeat(dowThursday  , 8,30,0,  tvOnSeq);
-  Alarm.alarmRepeat(dowThursday  , 9,20,0, TV_Off);
-  
-  Alarm.alarmRepeat(dowFriday    , 6,45,0,  tvOnSeq);
-  Alarm.alarmRepeat(dowFriday    , 7,20,0, TV_Off);
+  */
 
 
-//  Alarm.alarmRepeat(dowSaturday  , 9,15,0,  tvOnSeq);
-//  Alarm.alarmRepeat(dowSaturday  , 9,15,0,  tvOnSeq);
-//
-//  Alarm.alarmRepeat(dowSunday    , 15,20,0,  tvOnSeq);
-//  Alarm.alarmRepeat(dowSunday    , 15,20,0,  tvOnSeq);
-}
+void setup(){
+    Serial.begin(115200);
+    pinMode(5, INPUT);
+
+    IR.Setup(IRLEDpin, BITtime);
+    RecieveIR.setup();
+    
+    displaytime.Setup();
+    displaytime.Wifi_Connecting();
+
+    startMillis = millis();  //initial start time
+
+    delay(1000);
+    getTime();
+    AlarmTimeSetup();
+
+
+    //   Alarm.alarmRepeat(18,53,0, getTime);            // Refresh Time at 1:00 am every day
+    //   Alarm.alarmRepeat(19,56,0, AlarmTimeSetup);     // Refresh Time at 1:00 am every day 
+    //Alarm.timerRepeat(3, SerialTest);
+    //Alarm.timerRepeat(1, DisplayLocalTime);
+
+    Alarm.alarmRepeat(dowMonday    , 6,45,0, tvOnSeq);
+    Alarm.alarmRepeat(dowMonday    , 7,20,0, TV_Off);
+    
+    Alarm.alarmRepeat(dowTuesday   , 6,45,0, tvOnSeq);
+    Alarm.alarmRepeat(dowTuesday   , 7,20,0, TV_Off);
+    
+    Alarm.alarmRepeat(dowWednesday , 6,45,0,  tvOnSeq);
+    Alarm.alarmRepeat(dowWednesday , 7,20,0, TV_Off);
+    
+    Alarm.alarmRepeat(dowThursday  , 8,30,0,  tvOnSeq);
+    Alarm.alarmRepeat(dowThursday  , 9,20,0, TV_Off);
+    
+    Alarm.alarmRepeat(dowFriday    , 6,45,0,  tvOnSeq);
+    Alarm.alarmRepeat(dowFriday    , 7,20,0, TV_Off);
+
+
+    //Alarm.alarmRepeat(dowSaturday  , 9,15,0,  tvOnSeq);
+    //Alarm.alarmRepeat(dowSaturday  , 9,15,0,  tvOnSeq);
+    //
+    //Alarm.alarmRepeat(dowSunday    , 15,20,0,  tvOnSeq);
+    //Alarm.alarmRepeat(dowSunday    , 15,20,0,  tvOnSeq);
+
+    RecieveIR.Record_Power_Button();
+
+} //end setup()
 
 void loop() {
-  Alarm.delay(100);
-  IR.Write(The_Power_Button);
+  Record_IR = digitalRead(5);
+  //debugBlinker();
+  if(Record_IR == true){
+    RecieveIR.decode(Record_IR);
+  }
+  if(digitalRead(13) == 1){
+    Serial.println("Done Button Pressed");
+    Alarm.delay(500);
+  }
+
   displaytime.Write(year(), month(), day(), weekday(), hourFormat12(), minute(), second());
-}
+  Alarm.delay(1000);
+
+  //if(RecieveIR.IR_Data[0] = 0){} // line showing how to use the IR Data Array
+
+
+
+  currentMillis = millis();  //get the current time
+    if (currentMillis - startMillis >= 180000){  //test whether the period has elapsed
+      /* IR.Write(The_Power_Button);
+      displaytime.Write(year(), month(), day(), weekday(), hourFormat12(), minute(), second());
+      startMillis = currentMillis;  //IMPORTANT to save the start time of the current LED brightness */
+        
+      RecieveIR.send();
+      startMillis = currentMillis;
+        
+    }
+
+
+} //end loop()
