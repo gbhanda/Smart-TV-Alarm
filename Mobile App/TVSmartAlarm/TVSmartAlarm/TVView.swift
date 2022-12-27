@@ -205,6 +205,7 @@ struct NewTVRegisteringView: View{
 }
 
 struct SelectButtonSequenceView: View{
+    @Environment(\.presentationMode) var presentation
     var TVID: Int
     @State var button: RemoteButton
     @State var frequency: Int = 1
@@ -262,7 +263,8 @@ struct SelectButtonSequenceView: View{
     }
     func saveButtonSequence(){
         addButtonInSequence(TVID: TVID, buttonName: button.buttonName, numOfRepeat: frequency)
-        path = NavigationPath()
+        self.presentation.wrappedValue.dismiss()
+        //path = NavigationPath()
     }
 }
 

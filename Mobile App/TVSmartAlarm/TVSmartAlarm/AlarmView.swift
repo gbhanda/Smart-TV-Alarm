@@ -256,7 +256,7 @@ struct EditAlarmView: View{
     
     func editAlarmInternal(){
         editAlarm(TVID: currentTVID, oldAlarm: alarmCopy, newAlarm: alarm)
-        self.presentation.wrappedValue.dismiss()
+        //self.presentation.wrappedValue.dismiss()
         path = NavigationPath()
     }
 }

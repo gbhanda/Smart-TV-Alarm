@@ -14,9 +14,9 @@ var buttonSequenceArray: Array<buttonInSequence> = [
     buttonInSequence(sequenceID: 1, buttonName: "Volume Up", numOfRepeat: 15)]
 
 var TVs: Array<TV> = [
-    TV(TVID: 0, name: "DefaultRoku", alarms: [Alarm(dateTime: Date(), repeatFrequency: .none, enabled: true)], sequnce: buttonSequenceArray),
-    TV(TVID:1, name: "LG"),
-    TV(TVID:21, name: "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"),
+    TV(TVID: 0, name: "DefaultRoku", alarms: [Alarm(dateTime: Date(), repeatFrequency: .none, enabled: true), Alarm(dateTime: Date(), repeatFrequency: .none, enabled: true)], sequnce: buttonSequenceArray),
+    TV(TVID:1, name: "LG", alarms: [Alarm(dateTime: Date(), repeatFrequency: .none, enabled: true), Alarm(dateTime: Date(), repeatFrequency: .none, enabled: true)], sequnce: buttonSequenceArray),
+    TV(TVID:21, name: "Samsung", alarms: [Alarm(dateTime: Date(), repeatFrequency: .none, enabled: true)], sequnce: buttonSequenceArray),
     ]
 
 struct RemoteButton: Hashable, Equatable{
@@ -78,7 +78,7 @@ struct TV: Hashable{
     ]
     var frequency: Int = 38000
     var alarms: Array<Alarm> = []
-    var sequnce: Array<buttonInSequence> = []
+    var sequnce: Array<buttonInSequence> = [buttonInSequence(sequenceID: 0, buttonName: "Power", numOfRepeat: 1)]
 }
 
 enum alarmRepeat: CaseIterable{

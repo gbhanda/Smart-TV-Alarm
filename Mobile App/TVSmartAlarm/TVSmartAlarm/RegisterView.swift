@@ -114,7 +114,9 @@ struct NewButtonRegisteringView: View{
     func setSignal(){
         buttonSignal = detectSignal()
         if buttonSignal != [] {
-            status = "Signal Registered"
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                status = "Signal Registered"
+            }
         }
         else{
             status = "Unable to Detect Signal"
@@ -192,7 +194,9 @@ struct EditButtonView: View{
     func setSignal(){
         buttonSignal = detectSignal()
         if buttonSignal != [] {
-            status = "Signal Registered"
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                status = "Signal Registered"
+            }
         }
         else{
             status = "Unable to Detect Signal"
